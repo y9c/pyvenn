@@ -94,6 +94,8 @@ def get_labels(data, fill=["number"]):
     """
 
     N = len(data)
+    # separator of labels (default: " ")
+    sep = " "
 
     sets_data = [set(data[i]) for i in range(N)]  # sets for separate groups
     s_all = set(chain(*data))                     # union of all sets
@@ -111,19 +113,19 @@ def get_labels(data, fill=["number"]):
             value = value - s
         set_collections[key] = value
 
-    labels = {k: "" for k in set_collections}
+    labels = {k: [] for k in set_collections}
     if "logic" in fill:
         for k in set_collections:
-            labels[k] = k + ": "
+            labels[k].append(k + ": ")
     if "number" in fill:
         for k in set_collections:
-            labels[k] += str(len(set_collections[k]))
+            labels[k].append(str(len(set_collections[k])))
     if "percent" in fill:
         data_size = len(s_all)
         for k in set_collections:
-            labels[k] += "(%.1f%%)" % (100.0 * len(set_collections[k]) / data_size)
+            labels[k].append("(%.1f%%)" % (100.0 * len(set_collections[k]) / data_size))
 
-    return labels
+    return {k: sep.join(labels[k]) for k in labels}
 
 def venn2(labels, names=['A', 'B'], **options):
     """
